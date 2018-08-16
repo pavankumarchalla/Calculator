@@ -9,8 +9,18 @@
 import WatchKit
 import Foundation
 
+enum modes {
+    case NOT_SET
+    case ADDITION
+    case SUBTRACTION
+}
 
 class InterfaceController: WKInterfaceController {
+
+    var labelString = "0"
+    var currentMode = modes.NOT_SET
+    var savedNum: Int64 = 0
+    var lastButtonWasMode = false
 
     @IBOutlet var displayLabel: WKInterfaceLabel!
 
@@ -36,7 +46,11 @@ class InterfaceController: WKInterfaceController {
     }
 
     @IBAction func tappedClear() {
-
+        savedNum = 0
+        labelString = "0"
+        displayLabel.setText(labelString)
+        currentMode = modes.NOT_SET
+        lastButtonWasMode = false
     }
 
     @IBAction func tappedEquals() {
@@ -56,6 +70,15 @@ class InterfaceController: WKInterfaceController {
 
     // MARK: - Custom methods
     private func tappedNumber(num: Int) {
+        labelString = labelString.appending("\(num)")
+        updateText()
+    }
 
+    private func updateText() {
+        guard let labelInt = Int64(labelString) else {
+            displayLabel.setText("number is too large.")
+            return
+        }
+        displayLabel.setText("\(labelInt)")
     }
 }
