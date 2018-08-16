@@ -38,11 +38,11 @@ class InterfaceController: WKInterfaceController {
 
     // IBAction methods
     @IBAction func tappedPlus() {
-
+        changeMode(newMode: modes.ADDITION)
     }
 
     @IBAction func tappedMinus() {
-
+        changeMode(newMode: modes.SUBTRACTION)
     }
 
     @IBAction func tappedClear() {
@@ -54,7 +54,24 @@ class InterfaceController: WKInterfaceController {
     }
 
     @IBAction func tappedEquals() {
+        guard let num = Int64(labelString) else {
+            return
+        }
 
+        if currentMode == modes.NOT_SET || lastButtonWasMode {
+            return
+        }
+
+        if currentMode == modes.ADDITION {
+            savedNum += num
+        } else if currentMode == modes.SUBTRACTION {
+            savedNum -= num
+        }
+
+        currentMode = modes.NOT_SET
+        labelString = "\(savedNum)"
+        updateText()
+        lastButtonWasMode = true
     }
 
     @IBAction func tapped0() { tappedNumber(num: 0) }
@@ -70,6 +87,10 @@ class InterfaceController: WKInterfaceController {
 
     // MARK: - Custom methods
     private func tappedNumber(num: Int) {
+        if lastButtonWasMode {
+            lastButtonWasMode = false
+            labelString = "0"
+        }
         labelString = labelString.appending("\(num)")
         updateText()
     }
@@ -79,6 +100,16 @@ class InterfaceController: WKInterfaceController {
             displayLabel.setText("number is too large.")
             return
         }
+
+        savedNum = currentMode == modes.NOT_SET ? labelInt : savedNum
         displayLabel.setText("\(labelInt)")
+    }
+
+    private func changeMode(newMode: modes) {
+        if savedNum == 0 {
+            return
+        }
+        currentMode = newMode
+        lastButtonWasMode = true
     }
 }
