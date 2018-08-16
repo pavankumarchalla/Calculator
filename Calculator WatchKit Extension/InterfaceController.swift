@@ -102,7 +102,13 @@ class InterfaceController: WKInterfaceController {
         }
 
         savedNum = currentMode == modes.NOT_SET ? labelInt : savedNum
-        displayLabel.setText("\(labelInt)")
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        let intNum = NSNumber(value: labelInt)
+        let str = formatter.string(from: intNum)!
+
+        displayLabel.setText("\(str)")
     }
 
     private func changeMode(newMode: modes) {
